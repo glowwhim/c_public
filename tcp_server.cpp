@@ -40,6 +40,7 @@ int TcpServer::Run(int port)
 
     for (int i = 0; i < connect_list.size(); i++)
         close(connect_list[i]);
+    return 0;
 }
 
 int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
