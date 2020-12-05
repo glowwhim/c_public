@@ -13,6 +13,11 @@ TcpServer::TcpServer()
     on_receive_data = nullptr;
 }
 
+void TcpServer::OnReceiveData(int connect_fd, char *data)
+{
+
+}
+
 int TcpServer::Run(int port)
 {
     socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -43,6 +48,15 @@ int TcpServer::Run(int port)
     return 0;
 }
 
+void TcpServer::CloseConnection(int connect_index, fd_set *fdsr)
+{
+    int connect_fd = connect_list[connect_index];
+    close(connect_fd);
+    FD_CLR(connect_fd, fdsr);
+    connect_list.erase(connect_list.begin() + connect_index);
+    printf("close connection: %d\n", connect_fd);
+}
+
 int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
 {
         // initialize file descriptor set
@@ -66,9 +80,7 @@ int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
             if (!FD_ISSET(connect_fd, fdsr)) continue;
             ret = recv(connect_fd, buffer, TCP_SERVER_BUFFER_SIZE, 0);
             if (ret <= 0) {
-                close(connect_fd);
-                FD_CLR(connect_fd, fdsr);
-                connect_list.erase(connect_list.begin() + i--);
+                CloseConnection(i--, fdsr);
                 printf("close connection: %d\n", connect_fd);
             } else {
                 if (ret >= TCP_SERVER_BUFFER_SIZE) ret = TCP_SERVER_BUFFER_SIZE - 1;
@@ -76,7 +88,9 @@ int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
                 printf("====================receive data====================\n");
                 printf("%s\n", buffer);
                 // handle receive
+                OnReceiveData(connect_fd, buffer);
                 if (on_receive_data != nullptr) on_receive_data(connect_fd, buffer);
+                if (!keepConnect) CloseConnection(i--, fdsr);
             }
         }
 
@@ -91,4 +105,21 @@ int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
             if (new_fd > max_fd) max_fd = new_fd;
         }
         return max_fd;
+}
+
+void HttpServer::OnReceiveData(int connect_fd, char *data)
+{
+    char content_type[64];
+    char content[4096];
+    char header[1024];
+    GetContent(content_type, content);
+    sprintf(header, HTTP_HEADER, strlen(content), content_type);
+    send(connect_fd, header, strlen(header), 0);
+    send(connect_fd, content, strlen(content), 0);
+}
+
+void HttpServer::GetContent(char *type, char *content)
+{
+    strcpy(type, "text");
+    strcpy(content, "hello");
 }
