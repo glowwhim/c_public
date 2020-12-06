@@ -10,8 +10,6 @@
 #include <pthread.h>
 #include "tcp_client.h"
 
-#
-
 TcpClient::TcpClient()
 {
     socket_fd = -1;
