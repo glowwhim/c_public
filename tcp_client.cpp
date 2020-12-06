@@ -7,15 +7,25 @@
 #include<netinet/in.h>
 #include<arpa/inet.h>
 #include<unistd.h>
+#include <pthread.h>
 #include "tcp_client.h"
 
-int TcpClient::Run(char *ip, int port)
+#
+
+TcpClient::TcpClient()
 {
-    int socket_fd;
+    socket_fd = -1;
+}
+
+int TcpClient::Connect(const char *ip, int port)
+{
+    if (socket_fd != -1) return 0;
+
     char receiveBuffer[TCP_CLIENT_BUFFER_SIZE], sendBuffer[TCP_CLIENT_BUFFER_SIZE];
     struct sockaddr_in serverAddr;
 
     if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) return 1;
+    printf("create socket success\n");
 
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
@@ -25,16 +35,53 @@ int TcpClient::Run(char *ip, int port)
     if (connect(socket_fd, (struct sockaddr*)&serverAddr, sizeof(serverAddr)) < 0) return 3;
     printf("connect success\n");
 
+    return 0;
+}
+
+int TcpClient::StartListen()
+{
+    if (socket_fd == -1) return 1;
+
+    pthread_t tids[1];
+    pthread_create(tids, NULL, ListenThread, this);
+
+    return 0;
+}
+
+void* TcpClient::ListenThread(void *arg)
+{
+    printf("start listen\n");
+    TcpClient *client = (TcpClient*) arg;
+    char buffer[TCP_CLIENT_RECEIVE_BUFFER_SIZE];
     while (1)
     {
-        printf("send msg to server: \n");
-        fgets(sendBuffer, TCP_CLIENT_BUFFER_SIZE, stdin);
-        if(send(socket_fd, sendBuffer, TCP_CLIENT_BUFFER_SIZE, 0) < 0) return 4;
-        int n = recv(socket_fd, receiveBuffer, TCP_CLIENT_BUFFER_SIZE, 0);
-        receiveBuffer[n] = '\0';
+        int n = recv(client->socket_fd, buffer, TCP_CLIENT_RECEIVE_BUFFER_SIZE - 1, 0);
+        if (n <= 0) break;
+        buffer[n] = '\0';
         printf("====================receive data====================\n");
-        printf("%s\n", receiveBuffer);
+        printf("%s\n", buffer);
     }
-    close(socket_fd);
-    return 0;
+    printf("stop listen\n");
+    client->Close();
+    return NULL;
+}
+
+void TcpClient::Send(const char *data, int len)
+{
+    send(socket_fd, data, len, 0);
+    
+    char buffer[TCP_CLIENT_RECEIVE_BUFFER_SIZE];
+    if (len >= TCP_CLIENT_RECEIVE_BUFFER_SIZE) len = TCP_CLIENT_RECEIVE_BUFFER_SIZE - 1;
+    memcpy(buffer, data, len);
+    buffer[len] = 0;
+    printf("send: %s\n", buffer);
+}
+
+void TcpClient::Close()
+{
+    if (socket_fd == -1) return;
+    int to_close = socket_fd;
+    socket_fd = -1;
+    close(to_close);
+    printf("close socket\n");
 }

@@ -1,10 +1,19 @@
 
 
 #define TCP_CLIENT_BUFFER_SIZE 4096
+#define TCP_CLIENT_RECEIVE_BUFFER_SIZE 4096
 
 class TcpClient {
 
+    private:
+    int socket_fd;
+    static void* ListenThread(void *arg);
+
     public:
-    int Run(char *ip, int port);
+    TcpClient();
+    int Connect(const char *ip, int port);
+    int StartListen();
+    void Send(const char *data, int len);
+    void Close();
 
 };
