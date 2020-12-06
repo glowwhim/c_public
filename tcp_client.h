@@ -1,6 +1,5 @@
 
 
-#define TCP_CLIENT_BUFFER_SIZE 4096
 #define TCP_CLIENT_RECEIVE_BUFFER_SIZE 4096
 
 class TcpClient {

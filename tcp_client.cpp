@@ -21,12 +21,10 @@ int TcpClient::Connect(const char *ip, int port)
 {
     if (socket_fd != -1) return 0;
 
-    char receiveBuffer[TCP_CLIENT_BUFFER_SIZE], sendBuffer[TCP_CLIENT_BUFFER_SIZE];
-    struct sockaddr_in serverAddr;
-
     if( (socket_fd = socket(AF_INET, SOCK_STREAM, 0)) < 0) return 1;
     printf("create socket success\n");
 
+    struct sockaddr_in serverAddr;
     memset(&serverAddr, 0, sizeof(serverAddr));
     serverAddr.sin_family = AF_INET;
     serverAddr.sin_port = htons(port);
