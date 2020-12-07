@@ -18,6 +18,11 @@ void TcpServer::OnReceiveData(int connect_fd, char *data)
 
 }
 
+void TcpServer::Send(int connect_fd, char *data, int len)
+{
+    send(connect_fd, data, len, 0);
+}
+
 int TcpServer::Run(int port)
 {
     socket_fd = socket(AF_INET, SOCK_STREAM, 0);

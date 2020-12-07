@@ -25,6 +25,7 @@ class TcpServer {
 
     TcpServer();
     int Run(int port);
+    void Send(int connect_fd, char *data, int len);
 
 };
 
