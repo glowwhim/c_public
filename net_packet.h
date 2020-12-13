@@ -4,9 +4,11 @@ class NetPacket
     private:
     int index;
     char *buffer;
+    int size;
 
     public:
-    NetPacket(char *buffer);
+    NetPacket(char *buffer, int size);
+    int Length();
     void PackChar(unsigned char c);
     void PackInt(unsigned int i);
     void PackString(const char *src);

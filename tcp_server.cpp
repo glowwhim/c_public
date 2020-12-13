@@ -7,13 +7,16 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "tcp_server.h"
+#include "util.cpp"
+
+using c_public_util::PrintByteCode;
 
 TcpServer::TcpServer()
 {
     on_receive_data = nullptr;
 }
 
-void TcpServer::OnReceiveData(int connect_fd, char *data)
+void TcpServer::OnReceiveData(int connect_fd, char *data, int size)
 {
 
 }
@@ -88,13 +91,10 @@ int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
                 CloseConnection(i--, fdsr);
                 printf("close connection: %d\n", connect_fd);
             } else {
-                if (ret >= TCP_SERVER_BUFFER_SIZE) ret = TCP_SERVER_BUFFER_SIZE - 1;
-                buffer[ret] = '\0';
-                printf("====================receive data====================\n");
-                printf("%s\n", buffer);
-                // handle receive
-                OnReceiveData(connect_fd, buffer);
-                if (on_receive_data != nullptr) on_receive_data(connect_fd, buffer);
+                printf("====================receive data, size=%d====================\n", ret);
+                PrintByteCode(buffer, ret);
+                OnReceiveData(connect_fd, buffer, ret);
+                if (on_receive_data != nullptr) on_receive_data(connect_fd, buffer, ret);
                 if (!keepConnect) CloseConnection(i--, fdsr);
             }
         }

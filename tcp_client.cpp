@@ -9,6 +9,9 @@
 #include<unistd.h>
 #include <pthread.h>
 #include "tcp_client.h"
+#include "util.cpp"
+
+using c_public_util::PrintByteCode;
 
 TcpClient::TcpClient()
 {
@@ -70,7 +73,7 @@ void TcpClient::Send(const char *data, int len)
     if (len >= TCP_CLIENT_RECEIVE_BUFFER_SIZE) len = TCP_CLIENT_RECEIVE_BUFFER_SIZE - 1;
     memcpy(buffer, data, len);
     buffer[len] = 0;
-    printf("send: %s\n", buffer);
+    PrintByteCode(data, len);
 }
 
 void TcpClient::Close()

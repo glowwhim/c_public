@@ -18,10 +18,10 @@ class TcpServer {
     protected:
     bool keepConnect;
     int socket_fd;
-    virtual void OnReceiveData(int connect_fd, char *data);
+    virtual void OnReceiveData(int connect_fd, char *data, int size);
 
     public:
-    void (*on_receive_data)(int connect_fd, char *data);
+    void (*on_receive_data)(int connect_fd, char *data, int size);
 
     TcpServer();
     int Run(int port);

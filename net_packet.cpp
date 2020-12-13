@@ -1,14 +1,21 @@
 #include "net_packet.h"
 #include <string.h>
 
-NetPacket::NetPacket(char *buffer)
+NetPacket::NetPacket(char *buffer, int size)
 {
     index = 0;
     this->buffer = buffer;
+    this->size = size;
+}
+
+int NetPacket::Length()
+{
+    return index;
 }
 
 void NetPacket::PackChar(unsigned char c)
 {
+    if (index + 1 > size) return;
     buffer[index++] = c;
 }
 
@@ -27,6 +34,7 @@ void NetPacket::PackString(const char *src)
 {
     int len = strlen(src);
     if (len > 255) len = 255;
+    if (index + len > size) return;
     PackChar((unsigned char)len);
     memcpy(buffer + index, src, len);
     index += len;
@@ -34,6 +42,7 @@ void NetPacket::PackString(const char *src)
 
 unsigned char NetPacket::UnpackChar()
 {
+    if (index + 1 > size) return 0;
     return (unsigned char)buffer[index++];
 }
 
@@ -41,15 +50,16 @@ unsigned int NetPacket::UnpackInt()
 {
     unsigned int i = 0;
     i = i | (unsigned int) UnpackChar();
-    i = i | (unsigned int) UnpackChar() << 8;
-    i = i | (unsigned int) UnpackChar() << 16;
-    i = i | (unsigned int) UnpackChar() << 24;
+    i = i | ((unsigned int) UnpackChar() << 8);
+    i = i | ((unsigned int) UnpackChar() << 16);
+    i = i | ((unsigned int) UnpackChar() << 24);
     return i;
 }
 
 void NetPacket::UnpackString(char *dst)
 {
     int len = UnpackChar();
+    if (index + len > size) len = size - index;
     if (len != 0)
     {
         memcpy(dst, buffer + index, len);
