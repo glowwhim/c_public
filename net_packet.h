@@ -9,6 +9,8 @@ class NetPacket
     public:
     NetPacket(char *buffer, int size);
     int Length();
+    bool CheckIsAndSkip(const char *str);
+
     void PackChar(unsigned char c);
     void PackInt(unsigned int i);
     void PackString(const char *src);

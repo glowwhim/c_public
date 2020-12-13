@@ -13,6 +13,19 @@ int NetPacket::Length()
     return index;
 }
 
+bool NetPacket::CheckIsAndSkip(const char *str)
+{
+    int i = 0;
+    int len = index >= size ? 0 : (unsigned char)buffer[index];
+    while (i < len && buffer[i + index + 1] == str[i] && str[i] != 0)
+    {
+        i++;
+    }
+    bool b = i == len && str[i] == 0;
+    if (b) index += (i + 1);
+    return b;
+}
+
 void NetPacket::PackChar(unsigned char c)
 {
     if (index + 1 > size) return;
