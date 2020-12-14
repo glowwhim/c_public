@@ -1,17 +1,14 @@
-#include "tcp_server.h"
-#include <netinet/in.h>
+#include "c_string.h"
 
-// g++ main.cpp tcp_server.cpp -o main.out
-
-void on_receive(int connect_fd, char *data)
-{
-    //send(connect_fd, "hello", 5, 0);
-}
+using namespace c_string;
 
 int main(int argc, char* argv[])
 {
-    HttpServer server;
-    server.on_receive_data = on_receive;
-    server.Run(4000);
+    String64 str1("hello, worldj");
+    String64 str2("hello, world");
+    String64 str3("==");
+    String64 str4("!=");
+    if (str1 == str2) str3.Print();
+    else str4.Print();
     return 0;
 }

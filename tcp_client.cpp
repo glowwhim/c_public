@@ -56,9 +56,8 @@ void* TcpClient::ListenThread(void *arg)
     {
         int n = recv(client->socket_fd, buffer, TCP_CLIENT_RECEIVE_BUFFER_SIZE - 1, 0);
         if (n <= 0) break;
-        buffer[n] = '\0';
         printf("====================receive data====================\n");
-        printf("%s\n", buffer);
+        PrintByteCode(buffer, n);
     }
     printf("stop listen\n");
     client->Close();
