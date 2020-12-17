@@ -7,7 +7,10 @@ namespace c_public_util
     {
         for (int i = 0; i < len; i++)
         {
-            printf("%02X-%c ", (unsigned char) bytes[i], bytes[i]); 
+            char c = bytes[i];
+            bool printChar = c > 32 && c < 127;
+            if (printChar) printf("%c ", c); 
+            else printf("%02X ", (unsigned char) c); 
         }
         printf("\n");
     }
