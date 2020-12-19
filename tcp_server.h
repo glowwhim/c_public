@@ -32,7 +32,7 @@ class TcpServer {
 class HttpServer : public TcpServer {
 
     protected:
-    void OnReceiveData(int connect_fd, char *data);
+    void OnReceiveData(int connect_fd, char *data, int size);
     virtual void GetContent(char *type, char *content);
 
 };

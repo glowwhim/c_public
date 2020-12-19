@@ -112,7 +112,7 @@ int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
         return max_fd;
 }
 
-void HttpServer::OnReceiveData(int connect_fd, char *data)
+void HttpServer::OnReceiveData(int connect_fd, char *data, int size)
 {
     char content_type[64];
     char content[4096];
