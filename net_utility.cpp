@@ -6,6 +6,17 @@
 namespace net_utility
 {
 
+    void SendHttpText(int connect_fd, const char *text, int len)
+    {
+        const char HTTP_HEADER[] = "HTTP/1.1 200 OK\n"
+        "Content-Length: %d\nConnection: close\n"
+        "Content-Type: text\n\n";
+        char header[1024];
+        sprintf(header, HTTP_HEADER, len);
+        send(connect_fd, header, strlen(header), 0);
+        send(connect_fd, text, len, 0);
+    }
+
     int UdpSend(char *ip, int port, char *data, int len)
     {
         int socket_fd = socket(AF_INET, SOCK_DGRAM, 0);
