@@ -21,7 +21,7 @@ void TcpServer::OnReceiveData(int connect_fd, char *data, int size)
 
 }
 
-void TcpServer::Send(int connect_fd, char *data, int len)
+void TcpServer::Send(int connect_fd, const char *data, int len)
 {
     send(connect_fd, data, len, 0);
 }

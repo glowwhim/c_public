@@ -7,6 +7,10 @@ const char HTTP_HEADER[] = "HTTP/1.1 200 OK\n"
     "Content-Length: %ld\nConnection: close\n"
     "Content-Type: %s\n\n";
 
+const char HTTP_DOWNLOAD_RESPONSE_HEADER[] = "HTTP/1.1 200 OK\n"
+    "Connection: close\nContent-Disposition: attachment\n"
+    "Content-Type: octet-stream\n\n";
+
 class TcpServer {
 
     private:
@@ -25,7 +29,7 @@ class TcpServer {
 
     TcpServer();
     int Run(int port);
-    void Send(int connect_fd, char *data, int len);
+    void Send(int connect_fd, const char *data, int len);
 
 };
 
