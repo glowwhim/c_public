@@ -1,6 +1,13 @@
 #include <iostream>
 #include "c_public_util.h"
 
+const char* CPublicUtil::get_file_name(const char *file_path)
+{
+    int i = strlen(file_path) - 1;
+    while (i >= 0 && file_path[i] != '/') i--;
+    return file_path + i + 1;
+}
+
 void CPublicUtil::PrintByteCode(const char *bytes, int len)
 {
     for (int i = 0; i < len; i++)

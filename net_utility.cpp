@@ -2,6 +2,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <arpa/inet.h>
+#include "c_public_util.h"
 
 namespace net_utility
 {
@@ -44,6 +45,17 @@ namespace net_utility
         sprintf(header, HTTP_HEADER, len);
         send(connect_fd, header, strlen(header), 0);
         send(connect_fd, text, len, 0);
+    }
+
+    void SendHttpFile(int connect_fd, const char *file_path)
+    {
+        const char HTTP_HEADER[] = "HTTP/1.1 200 OK\n"
+        "Connection: close\nContent-Disposition: attachment;filename=%s\n"
+        "Content-Type: application/octet-stream\n\n";
+        char header[1024];
+        sprintf(header, HTTP_HEADER, CPublicUtil::get_file_name(file_path));
+        send(connect_fd, header, strlen(header), 0);
+        SendFile(connect_fd, file_path);
     }
 
     int UdpSend(char *ip, int port, char *data, int len)
