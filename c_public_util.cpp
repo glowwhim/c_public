@@ -1,4 +1,5 @@
 #include <iostream>
+#include <string.h>
 #include "c_public_util.h"
 
 const char* CPublicUtil::get_file_name(const char *file_path)
