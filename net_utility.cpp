@@ -6,6 +6,35 @@
 namespace net_utility
 {
 
+    void SendFile(int connect_fd, const char *path)
+    {
+        FILE *fp = fopen(path, "rb");
+        char buffer[1024];
+        bool eof = false;
+        while (!eof)
+        {
+            int i;
+            for (i = 0; i < 1024; i++)
+            {
+                int c = fgetc(fp);
+                eof = c == EOF;
+                if (eof) break;
+                buffer[i] = (char) c;
+            }
+            if (i) send(connect_fd, buffer, i, 0);
+        }
+    }
+
+    void SendHttpHeader(int connect_fd, const char *type)
+    {
+        const char HTTP_HEADER[] = "HTTP/1.1 200 OK\n"
+        "Connection: close\n"
+        "Content-Type: %s\n\n";
+        char header[1024];
+        sprintf(header, HTTP_HEADER, type);
+        send(connect_fd, header, strlen(header), 0);
+    }
+
     void SendHttpText(int connect_fd, const char *text, int len)
     {
         const char HTTP_HEADER[] = "HTTP/1.1 200 OK\n"

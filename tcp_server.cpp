@@ -7,9 +7,7 @@
 #include <netinet/in.h>
 #include <arpa/inet.h>
 #include "tcp_server.h"
-#include "util.cpp"
-
-using c_public_util::PrintByteCode;
+#include "c_public_util.h"
 
 TcpServer::TcpServer()
 {
@@ -92,7 +90,7 @@ int TcpServer::CheckReceive(fd_set *fdsr, int max_fd)
                 printf("close connection: %d\n", connect_fd);
             } else {
                 printf("====================receive data, size=%d====================\n", ret);
-                PrintByteCode(buffer, ret);
+                CPublicUtil::PrintByteCode(buffer, ret);
                 OnReceiveData(connect_fd, buffer, ret);
                 if (on_receive_data != nullptr) on_receive_data(connect_fd, buffer, ret);
                 if (!keepConnect) CloseConnection(i--, fdsr);
