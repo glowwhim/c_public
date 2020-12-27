@@ -20,3 +20,11 @@ void CPublicUtil::AppendFile(const char *path, const char *data, int len)
     for (int i = 0; i < len; i++) fputc(data[i], fp);
     fclose(fp);
 }
+
+void CPublicUtil::WriteFile(const char *path, const char *data, int len)
+{
+    FILE *fp = NULL;
+    fp = fopen(path, "wb");
+    for (int i = 0; i < len; i++) fputc(data[i], fp);
+    fclose(fp);
+}
